@@ -35,11 +35,3 @@ int main() {
     return 0;
 }
 
-/*algorithm
- * 1.use libraries
- * 2.create pid_t pid, message, buffer
- * 3.mak pipe
- * 4.create fork
- * 5.for child close write end, read buffer, print message and close reader
- * 6.for parent close read end, write message close writer
- */
