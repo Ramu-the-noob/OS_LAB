@@ -3,67 +3,56 @@
 
 struct Process {
     int pid;
-    int at;      // Arrival Time
-    int bt;      // Burst Time
-    int rt;      // Remaining Time
-    int ct;      // Completion Time
-    int tat;     // Turnaround Time
-    int wt;      // Waiting Time
+    int at;
+    int bt;
+    int rt;
+    int ct;
+    int tat; // ct - at
+    int wt; //tat - bt
 };
 
 int main() {
-    int n, completed = 0, time = 0;
-    float totalWT = 0;
+    int n, Completed = 0 , TotalWt = 0, CurrentTime = 0;
 
-    printf("Enter number of processes: ");
+    printf("enter number of processes: ");
     scanf("%d", &n);
 
-    struct Process p[n];
+    struct Process process[n];
 
-    // Input process details
     for (int i = 0; i < n; i++) {
-        p[i].pid = i + 1;
-        printf("Enter Arrival Time of P%d: ", i + 1);
-        scanf("%d", &p[i].at);
-        printf("Enter Burst Time of P%d: ", i + 1);
-        scanf("%d", &p[i].bt);
-        p[i].rt = p[i].bt;   // Initialize remaining time
+        printf("enter PID: ");
+        scanf("%d", &process[i].pid);
+        printf("enter AT: ");
+        scanf("%d", &process[i].at);
+        printf("enter BT: ");
+        scanf("%d", &process[i].bt);
+        process[i].rt = process[i].bt;
     }
+    while (Completed != n) {
+        int MinRT = INT_MAX;
+        int Shortest_index = -1;
 
-    // SRTF Simulation
-    while (completed != n) {
-        int shortest = -1;
-        int minRT = INT_MAX;
-
-        // Find process with minimum remaining time
         for (int i = 0; i < n; i++) {
-            if (p[i].at <= time && p[i].rt > 0 && p[i].rt < minRT) {
-                minRT = p[i].rt;
-                shortest = i;
+            if (process[i].at <= CurrentTime && process[i].rt > 0 && process[i].rt <= MinRT ) {
+                MinRT = process[i].rt;
+                Shortest_index = i;
             }
         }
-
-        // If no process available
-        if (shortest == -1) {
-            time++;
+        if (Shortest_index == -1) {
+            CurrentTime++;
             continue;
         }
 
-        // Execute for 1 time unit
-        p[shortest].rt--;
+        process[Shortest_index].rt--;
+        CurrentTime++;
 
-        // If process finishes
-        if (p[shortest].rt == 0) {
-            completed++;
-            p[shortest].ct = time + 1;
-
-            p[shortest].tat = p[shortest].ct - p[shortest].at;
-            p[shortest].wt  = p[shortest].tat - p[shortest].bt;
-
-            totalWT += p[shortest].wt;
+        if (process[Shortest_index].rt == 0) {
+            Completed++;
+            process[Shortest_index].ct = CurrentTime;
+            process[Shortest_index].tat =  process[Shortest_index].ct - process[Shortest_index].at;
+            process[Shortest_index].wt = process[Shortest_index].tat - process[Shortest_index].bt;
+            TotalWt += process[Shortest_index].wt;
         }
-
-        time++;
     }
 
     // Print the result table
@@ -71,10 +60,11 @@ int main() {
     printf("PID\tAT\tBT\tCT\tTAT\tWT\n");
     for (int i = 0; i < n; i++) {
         printf("P%d\t%d\t%d\t%d\t%d\t%d\n",
-            p[i].pid, p[i].at, p[i].bt, p[i].ct, p[i].tat, p[i].wt);
+            process[i].pid, process[i].at, process[i].bt, process[i].ct, process[i].tat, process[i].wt);
     }
 
-    printf("\nAverage Waiting Time = %.2f\n", totalWT / n);
+    printf("\nAverage Waiting Time = %d\n", TotalWt / n);
+
 
     return 0;
 }
