@@ -41,20 +41,19 @@ int main() {
             if (finish[i] == 0) {
                 int can_run = 1;
 
-                // Check if ALL needed resources for this process are <= available
+                
                 for (int j = 0; j < n; j++) {
                     if (need[i][j] > available[j]) {
-                        can_run = 0; // It needs more than we have
+                        can_run = 0; 
                         break;
                     }
                 }
 
-                // If it can run, execute it
+               
                 if (can_run == 1) {
-                    sequence[sequence_index++] = i; // Add to safe sequence
-                    finish[i] = 1;                  // Mark as finished
-
-                    // Return allocated resources back to the available pool
+                    sequence[sequence_index++] = i; 
+                    finish[i] = 1;                  
+                  
                     for (int y = 0; y < n; y++) {
                         available[y] += allocated[i][y];
                     }
@@ -63,8 +62,7 @@ int main() {
         }
     }
 
-    // 3. Verify if the system is safe
-    // If sequence_index equals the total number of processes, it's safe.
+    
     if (sequence_index == m) {
         printf("System is SAFE.\nSafe Sequence: ");
         for (int i = 0; i < m; i++) {
