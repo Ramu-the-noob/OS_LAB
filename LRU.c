@@ -8,7 +8,7 @@ int time[MAX_FRAMES];
 int counter = 0;
 int faults = 0;
 
-/* Initialize frames and time */
+
 void initializeFrames(int f) {
     for (int i = 0; i < f; i++) {
         frames[i] = -1;
@@ -16,7 +16,7 @@ void initializeFrames(int f) {
     }
 }
 
-/* Check if page exists */
+
 int findPage(int page, int f) {
     for (int i = 0; i < f; i++) {
         if (frames[i] == page)
@@ -25,7 +25,7 @@ int findPage(int page, int f) {
     return -1;
 }
 
-/* Find index of least recently used page */
+
 int findLRU(int f) {
     int min = time[0], pos = 0;
     for (int i = 1; i < f; i++) {
@@ -37,7 +37,7 @@ int findLRU(int f) {
     return pos;
 }
 
-/* Display frame table */
+
 void displayTable(int page, int f, int hit) {
     printf("%d\t", page);
     for (int i = 0; i < f; i++) {
@@ -65,13 +65,13 @@ int main() {
 
     initializeFrames(f);
 
-    /* Print table header */
+    
     printf("\nPage\t");
     for (int i = 0; i < f; i++)
         printf("Frame%d\t", i + 1);
     printf("Status\n");
 
-    /* LRU Simulation */
+   
     for (int i = 0; i < n; i++) {
         counter++;
         int pos = findPage(pages[i], f);
