@@ -95,11 +95,5 @@ int main() {
         pthread_join(writers[i], NULL);
     }
 
-   
-    sem_destroy(&rmutex);
-    sem_destroy(&wmutex);
-    sem_destroy(&read_try);
-    sem_destroy(&resource);
-
     return 0;
 }
