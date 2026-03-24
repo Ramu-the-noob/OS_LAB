@@ -1,40 +1,45 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
-#include <string.h>
 
 int main() {
+
     int fd[2];
+    //fd[0] = read
+    //fd[1] = write
     pid_t pid;
-    char message[] = "Hello from parent process";
+    char message[100] =  "hello from parent";
     char buffer[100];
 
-    // Create pipe
     if (pipe(fd) == -1) {
-        perror("pipe");
+        perror("pipe failed");
         return 1;
     }
 
-    // Create child process
     pid = fork();
-
     if (pid < 0) {
-        perror("fork");
+        perror("fork failed");
         return 1;
     }
-
-    // Child process
-    if (pid == 0) {
-        close(fd[1]); // Close write end
+    else if (pid == 0) {
+        close(fd[1]);
         read(fd[0], buffer, sizeof(buffer));
-        printf("Child received: %s\n", buffer);
+        printf("received message : %s", buffer );
         close(fd[0]);
     }
-    // Parent process
     else {
-        close(fd[0]); // Close read end
-        write(fd[1], message, strlen(message) + 1);
+        close(fd[0]);
+        write(fd[1], message, sizeof(message));
         close(fd[1]);
     }
-
     return 0;
 }
+
+/*algorithm
+ * 1.use libraries
+ * 2.create pid_t pid, message, buffer
+ * 3.mak pipe
+ * 4.create fork
+ * 5.for child close write end, read buffer, print message and close reader
+ * 6.for parent close read end, write message close writer
+ */
