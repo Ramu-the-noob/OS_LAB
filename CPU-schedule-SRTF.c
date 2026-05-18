@@ -1,70 +1,93 @@
-#include <stdio.h>
-#include <limits.h>
+#include "stdio.h"
 
-struct Process {
+struct Process{
     int pid;
     int at;
     int bt;
-    int rt;
     int ct;
-    int tat; // ct - at
-    int wt; //tat - bt
+    int wt;
+    int tat;
+    int rt;
 };
 
-int main() {
-    int n, Completed = 0 , TotalWt = 0, CurrentTime = 0;
+int main(){
 
-    printf("enter number of processes: ");
-    scanf("%d", &n);
+    int totalTime = 0;
+    int done = 0;
 
-    struct Process process[n];
+    printf("enter number of processes : ");
+    int numProcess;
+    scanf("%d", &numProcess);
 
-    for (int i = 0; i < n; i++) {
-        printf("enter PID: ");
-        scanf("%d", &process[i].pid);
-        printf("enter AT: ");
+    struct Process process[numProcess];
+
+    for(int i = 0; i < numProcess; i ++){
+        printf("enter AT of process %d : ", i);
         scanf("%d", &process[i].at);
-        printf("enter BT: ");
-        scanf("%d", &process[i].bt);
-        process[i].rt = process[i].bt;
-    }
-    while (Completed != n) {
-        int MinRT = INT_MAX;
-        int Shortest_index = -1;
 
-        for (int i = 0; i < n; i++) {
-            if (process[i].at <= CurrentTime && process[i].rt > 0 && process[i].rt <= MinRT ) {
-                MinRT = process[i].rt;
-                Shortest_index = i;
+        printf("enter BT of process %d : ", i);
+        scanf("%d", &process[i].bt);
+
+        struct Process[i].pid = i;
+        struct Process[i].rt = struct Process[i].bt;
+    }
+
+
+
+    while(done != numProcess){
+        int minTime = 100000;
+        int smallIndex = -1;
+
+        for(int i = 0; i < numProcess; i ++){
+            if(process[i].at <= totalTime && process[i].rt > 0 && process[i].rt < minTime){
+                minTime = process[i].rt;
+                smallIndex = i;
             }
         }
-        if (Shortest_index == -1) {
-            CurrentTime++;
+        if(smallIndex == -1){
+            totalTime++;
             continue;
         }
 
-        process[Shortest_index].rt--;
-        CurrentTime++;
+        process[smallIndex].rt--;
+        totalTime++;
 
-        if (process[Shortest_index].rt == 0) {
-            Completed++;
-            process[Shortest_index].ct = CurrentTime;
-            process[Shortest_index].tat =  process[Shortest_index].ct - process[Shortest_index].at;
-            process[Shortest_index].wt = process[Shortest_index].tat - process[Shortest_index].bt;
-            TotalWt += process[Shortest_index].wt;
+        if(process[smallIndex].rt == 0){
+            process[smallIndex].ct = totalTime;
+            process[smallIndex].tat = process[smallIndex].ct - process[smallIndex].at;
+            process[smallIndex].wt = process[smallIndex].tat - process[smallIndex].bt;
+
+            done++;
         }
+
     }
 
-    // Print the result table
-    printf("\nSRTF Scheduling Results:\n");
-    printf("PID\tAT\tBT\tCT\tTAT\tWT\n");
-    for (int i = 0; i < n; i++) {
-        printf("P%d\t%d\t%d\t%d\t%d\t%d\n",
-            process[i].pid, process[i].at, process[i].bt, process[i].ct, process[i].tat, process[i].wt);
+    printf("results : \n");
+    for(int i = 0; i < numProcess; i++){
+        printf("process %d \n burst time : %d \n arrival time : %d : \n Completion time : %d \n turn around time : %d \n waiting time : %d ",i, process[i].bt, process[i]. at, process[i]. ct, process[i].tat, process[i]. wt);
+        printf("\n");
     }
 
-    printf("\nAverage Waiting Time = %d\n", TotalWt / n);
-
-
-    return 0;
 }
+
+//learnt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
