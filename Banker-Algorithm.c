@@ -1,77 +1,43 @@
-#include <stdio.h>
+#include "stdio.h"
 
-/*
- * need
- * allocated
- * max
- * available
- * sequence
- */
-
-int main() {
-    int m = 5, n = 3;
-    int max[5][3]= {
-        {7,5,3},
-        {3,2,2},
-        {9,0,2},
-        {2,2,2},
-        {4,3,3}
-    };
-    int allocated[5][3] = {
-        {0,1,0},
-        {2,0,0},
-        {3,0,2},
-        {2,1,1},
-        {0,0,2}
-    };
+int main(){
+    
+    int available[3] = {3, 3, 2};
+    int max[5][3] = { {7,5,3}, {3,2,2}, {9,0,2}, {2,2,2}, {4,3,3} };
+    int allocated[5][3] = { {0,1,0}, {2,0,0}, {3,0,2}, {2,1,1}, {0,0,2} };
+    
     int need[5][3];
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 3; j++) {
-            need[i][j] = max[i][j] - allocated[i][j];
+    for(int i = 0; i < 5; i++){
+        for(int j = 0; j < 3; j++){
+            need[i][j] = max[i][j] - available[i][j];
         }
     }
-    int available[3] = {3, 3, 2};
-    int sequence[5];
-    int finish[5] = {0, 0, 0, 0, 0};
-    int sequence_index = 0;
-
     
-    for (int k = 0; k < m; k++) {
-        for (int i = 0; i < m; i++) {
-            if (finish[i] == 0) {
-                int can_run = 1;
-
+    int safe = 0;
+    int finish[5] = {0,0,0,0,0};
+    
+    for(int k = 0; k < 5; k++){
+        for(int j = 0; j < 5; j++){
+            if(finish[j] = 0){
                 
-                for (int j = 0; j < n; j++) {
-                    if (need[i][j] > available[j]) {
-                        can_run = 0; 
-                        break;
-                    }
-                }
-
-               
-                if (can_run == 1) {
-                    sequence[sequence_index++] = i; 
-                    finish[i] = 1;                  
-                  
-                    for (int y = 0; y < n; y++) {
-                        available[y] += allocated[i][y];
-                    }
+                if(available[j][0] >= need[j][0] && available[j][1] >= need[j][1] && available[j][2] >= need[j][2]){
+                    
+                    available[j][0] += allocated[j][0];
+                    available[j][1] += allocated[j][1];
+                    available[j][2] += allocated[j][2];
+                    
+                    finish[j] = 1;
+                    safe++;
+                    
                 }
             }
         }
     }
-
     
-    if (sequence_index == m) {
-        printf("System is SAFE.\nSafe Sequence: ");
-        for (int i = 0; i < m; i++) {
-            printf("P%d ", sequence[i]);
-        }
-        printf("\n");
-    } else {
-        printf("System is NOT SAFE. Deadlock detected.\n");
+    if(safe == 5){
+        printf("safe sequence");
+        return 0;
     }
-
+    printf("unsafe sequence");
     return 0;
 }
