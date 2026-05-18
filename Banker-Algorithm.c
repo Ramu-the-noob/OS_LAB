@@ -41,3 +41,4 @@ int main(){
     printf("unsafe sequence");
     return 0;
 }
+//learnt
