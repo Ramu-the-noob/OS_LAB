@@ -1,99 +1,89 @@
-#include <stdio.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <unistd.h>
+#include "stdio.h"
+#include "semaphore.h"
+#include "unistd.h"
+#include "pthread.h"
 
-int read_count = 0;
-int write_count = 0;
+int readCount = 0;
+int writeCount = 0;
 
-sem_t rmutex;    
-sem_t wmutex;    
-sem_t read_try;  
-sem_t resource;  
+sem_t reader;
+sem_t writer;
+sem_t resource;
+sem_t readTry;
 
-void *reader(void *arg) {
-    int id = *(int *)arg;
-
+void read(*args){
+    int id = *(int*)args;
     
-    sem_wait(&read_try);   
-    sem_wait(&rmutex);     
-
-    read_count++;
-    if (read_count == 1) {
-        sem_wait(&resource); 
+    sem_wait(readTry);
+    sem_wait(reader);
+    
+    readCount++;
+    if(readCount == 1){
+        sem_wait(resource);
     }
-
-    sem_post(&rmutex);     
-    sem_post(&read_try); 
-
     
-    printf("Reader %d is READING\n", id);
+    sem_post(reader);
+    sem_post(readTry);
+    
+    printf("reading\n");
     sleep(1);
-    printf("Reader %d has FINISHED READING\n", id);
-
-   
-    sem_wait(&rmutex);
-    read_count--;
-    if (read_count == 0) {
-        sem_post(&resource); 
-    }
-    sem_post(&rmutex);     
-
-    return NULL;
-}
-
-void *writer(void *arg) {
-    int id = *(int *)arg;
-
-   
-    sem_wait(&wmutex);    
-    write_count++;
-    if (write_count == 1) {
-        sem_wait(&read_try); 
-    }
-    sem_post(&wmutex);    
-
-    sem_wait(&resource);   
+    printf("stopped reading \n");
     
-    printf("\tWriter %d is WRITING\n", id);
+    sem_wait(reader);
+    readCount--;
+    
+    if(readCount == 0){
+        sem_post(resource);
+    }
+    
+    sem_post(reader);
+}
+void write(*args){
+    int id = *(int*)args;
+    
+    sem_wait(writer);
+    
+    writeCount++;
+    if(writeCount == 1){
+        sem_wait(resource);
+    }
+    
+    sem_post(writer);
+    
+    printf("writing");
     sleep(2);
-    printf("\tWriter %d has FINISHED WRITING\n", id);
-
-   
-    sem_post(&resource);   
+    printf("stopped writing");
     
-    sem_wait(&wmutex);     
-    write_count--;
-    if (write_count == 0) {
-        sem_post(&read_try); 
+    sem_wait(writer);
+    writeCount--;
+    
+    if(writeCount == 0){
+        sem_post(resource);
     }
-    sem_post(&wmutex);    
-
-    return NULL;
+    
+    sem_post(writer);
+    
 }
-
-int main() {
-    pthread_t readers[5], writers[5];
+int main(){
+    
+    pthread readers[5], writers[5];
     int id[5];
-
     
-    sem_init(&rmutex, 0, 1);
-    sem_init(&wmutex, 0, 1);
-    sem_init(&read_try, 0, 1);
-    sem_init(&resource, 0, 1);
-
+    sem_init(reader,0,1);
+    sem_init(writer,0,1);
+    sem_init(read_try,0,1);
+    sem_init(resource,0,1);
     
-    for (int i = 0; i < 5; i++) {
-        id[i] = i + 1;
-        pthread_create(&readers[i], NULL, reader, &id[i]);
-        pthread_create(&writers[i], NULL, writer, &id[i]);
+    for(int i = 0; i < 5; i++){
+        id[i] = i+1
+        pthread_create(&readers[i], nullptr, reader, &id[i]);
+        pthread_create(&writers[i], nullptr, writer, &id[i]);
     }
-
-   
-    for (int i = 0; i < 5; i++) {
-        pthread_join(readers[i], NULL);
-        pthread_join(writers[i], NULL);
+    for(int i = 0; i < 5; i++){
+        pthread_join(readers[5], nullptr);
+        pthread_join(writers[5], nullptr);
     }
-
+    
     return 0;
 }
+//learnt
